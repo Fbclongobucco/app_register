@@ -20,7 +20,7 @@ public class User {
         this.name = name;
         this.birthday = birthday;
         this.setEmail(email);
-        this.password = password;
+        this.setPassword(password);
         this.isActive = isActive;
     }
 
@@ -62,6 +62,7 @@ public class User {
     }
 
     public void setPassword(String password) {
+        passwordValidate(password);
         this.password = password;
     }
 
@@ -89,6 +90,10 @@ public class User {
         if (password.length() < 6) {
             throw new PasswordValidationException("password cannot be shorter than 6 digits");
         }
+    }
+
+    public Boolean ifThePasswordMatches(String password){
+        return this.password.equals(password);
     }
 
     @Override
