@@ -1,4 +1,6 @@
 package com.buccodev.app_register.infrastructure.controllers.dto;
 
-public record RequestUserDto() {
+import java.time.LocalDate;
+
+public record RequestUserDto(String name, String email, String password, LocalDate birthday) {
 }

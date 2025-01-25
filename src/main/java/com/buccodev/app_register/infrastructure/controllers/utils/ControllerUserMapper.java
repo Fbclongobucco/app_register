@@ -1,4 +1,4 @@
-package com.buccodev.app_register.infrastructure.controllers;
+package com.buccodev.app_register.infrastructure.controllers.utils;
 
 import com.buccodev.app_register.core.entities.User;
 import com.buccodev.app_register.infrastructure.controllers.dto.RequestUserDto;
