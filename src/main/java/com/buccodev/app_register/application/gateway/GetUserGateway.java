@@ -1,6 +1,5 @@
 package com.buccodev.app_register.application.gateway;
 
-import com.buccodev.app_register.application.exception.UserNotFoundException;
 import com.buccodev.app_register.application.usecase.GetUserUsecase;
 import com.buccodev.app_register.core.entities.User;
 
@@ -15,19 +14,11 @@ public class GetUserGateway {
     }
 
     public User getUserById(Long id){
-        User recoveredUser = usecase.getUserById(id);
-        if(recoveredUser == null){
-            throw new UserNotFoundException("User not found!");
-        }
-        return recoveredUser;
+        return usecase.getUserById(id);
     }
 
     public User getUserByEmail(String email){
-        User recoveredUser = usecase.getUserByEmail(email);
-        if(recoveredUser == null){
-            throw new UserNotFoundException("User not found!");
-        }
-        return recoveredUser;
+        return usecase.getUserByEmail(email);
     }
 
     public List<User> getAllUsers(){
