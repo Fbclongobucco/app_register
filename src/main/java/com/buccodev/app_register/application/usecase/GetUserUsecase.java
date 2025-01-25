@@ -8,6 +8,7 @@ public interface GetUserUsecase {
 
     User getUserById(Long id);
     User getUserByEmail(String email);
+    User login(String email, String password);
     List<User> getAllUser();
 
 }

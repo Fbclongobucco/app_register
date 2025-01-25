@@ -6,5 +6,4 @@ public interface DeleteUserUsecase {
 
     void deleteUserById(Long id);
     void deleteAllUsers();
-    User findUserById(Long id);
 }
