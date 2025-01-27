@@ -7,6 +7,8 @@ import com.buccodev.app_register.infrastructure.db.UserDomainRepository;
 import com.buccodev.app_register.infrastructure.domain.UserDomain;
 import com.buccodev.app_register.infrastructure.services.usecases.exception.ResourceNotFoundException;
 import com.buccodev.app_register.infrastructure.services.usecases.mappers.UserMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,11 +48,20 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
         return user;
     }
 
-    @Override
-    public List<User> getAllUser() {
+    public List<User> getAllUser(Integer page, Integer size) {
 
-        List<UserDomain> users = repository.findAll();
+        if (page < 0) {
+            throw new IllegalArgumentException("Page index must not be less than zero!");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Page size must not be less than or equal to zero!");
+        }
 
-        return users.stream().map(UserMapper::toUserFromUserDomain).toList();
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        Page<UserDomain> usersPage = repository.findAll(pageRequest);
+
+
+        return usersPage.map(UserMapper::toUserFromUserDomain).toList();
     }
 }

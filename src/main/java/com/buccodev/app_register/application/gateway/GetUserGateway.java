@@ -21,9 +21,12 @@ public class GetUserGateway {
         return usecase.getUserByEmail(email);
     }
 
-    public List<User> getAllUsers(){
-        return usecase.getAllUser();
+    public List<User> getAllUsers(Integer page,  Integer size){
+        return usecase.getAllUser(page, size);
     }
 
+    public User login(String email, String password){
+        return usecase.login(email, password);
+    }
 
 }
