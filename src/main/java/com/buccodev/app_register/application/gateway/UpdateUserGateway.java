@@ -18,4 +18,8 @@ public class UpdateUserGateway {
     public void updatePassword(Long id, String password){
      usecase.updatePasword(id, password);
     }
+
+    public void updateIscative(Long id, Boolean isActive){
+        usecase.updateIsActive(id, isActive);
+    }
 }

@@ -19,8 +19,5 @@ public class TokerManager {
         return token.equals(tokens.get(email));
     }
 
-    public void removeToken(String emai){
-        tokens.remove(emai);
-    }
 
 }

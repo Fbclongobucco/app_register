@@ -17,7 +17,7 @@ public class Config {
         config.addAllowedMethod("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); // Aplica para todos os endpoints
+        source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
 

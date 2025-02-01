@@ -18,10 +18,10 @@ public class UserDomain {
     @Temporal(TemporalType.DATE)
     private LocalDate birthday;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 150)
     private String email;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String password;
 
     @Column(nullable = false)

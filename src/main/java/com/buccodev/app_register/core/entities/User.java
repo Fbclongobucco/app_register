@@ -87,8 +87,8 @@ public class User {
 
 
     public void passwordValidate(String password) {
-        if (password.length() < 6) {
-            throw new PasswordValidationException("password cannot be shorter than 6 digits");
+        if (password.length() < 6 || password.length() > 100) {
+            throw new PasswordValidationException("password cannot be less than 6 digits or larger than 100!");
         }
     }
 

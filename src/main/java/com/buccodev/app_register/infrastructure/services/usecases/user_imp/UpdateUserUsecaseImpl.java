@@ -37,4 +37,13 @@ public class UpdateUserUsecaseImpl implements UpdateUserUsecase {
         repository.save(userUpdated);
     }
 
+    @Override
+    public void updateIsActive(Long id, Boolean isActive) {
+        UserDomain userDomain = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("user to be updated not found!"));
+        User userRecovered = UserMapper.toUserFromUserDomain(userDomain);
+        userRecovered.setActive(isActive);
+        UserDomain userUpdated = UserMapper.toUserDomainfromUser(userRecovered);
+        repository.save(userUpdated);
+    }
+
 }

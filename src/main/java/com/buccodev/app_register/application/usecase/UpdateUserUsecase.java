@@ -6,5 +6,6 @@ public interface UpdateUserUsecase {
 
     void updateUser(Long id, User user);
     void updatePasword(Long id, String password);
+    void updateIsActive(Long id, Boolean isActive);
 
 }

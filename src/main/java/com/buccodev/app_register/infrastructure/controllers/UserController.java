@@ -9,7 +9,6 @@ import com.buccodev.app_register.infrastructure.controllers.dto.*;
 import com.buccodev.app_register.infrastructure.controllers.excepition.TokenValidationException;
 import com.buccodev.app_register.infrastructure.controllers.utils.ControllerUserMapper;
 import com.buccodev.app_register.infrastructure.controllers.utils.TokerManager;
-import com.buccodev.app_register.infrastructure.services.usecases.mappers.UserMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
-@CrossOrigin(origins = "http://localhost:5500")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final CreateUserGateway createUserGateway;
@@ -40,7 +39,6 @@ public class UserController {
         User user = ControllerUserMapper.toUserFromRequestUserDto(requestUserDto);
         User userSalvered = createUserGateway.saveUser(user);
         ResponseUserDto responseUserDto = ControllerUserMapper.toResponseUserDtoFromUser(userSalvered);
-
         return ResponseEntity.created(URI.create("/api/v1/"+responseUserDto.id())).build();
     }
 
@@ -48,8 +46,7 @@ public class UserController {
     public ResponseEntity<ResponseUserDto> getUserById(@PathVariable Long userId, @RequestParam String token ){
 
         User user = getUserGateway.getUserById(userId);
-
-        if (!TokerManager.verifyToken(user.getEmail(), token)) {
+        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
             throw new TokenValidationException("invalid token!");
         }
         ResponseUserDto userDto = ControllerUserMapper.toResponseUserDtoFromUser(user);
@@ -61,8 +58,7 @@ public class UserController {
     public ResponseEntity<ResponseUserDto> getUserByEmail(@PathVariable String  email, @RequestParam String token ){
 
         User user = getUserGateway.getUserByEmail(email);
-
-        if (!TokerManager.verifyToken(user.getEmail(), token)) {
+        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
             throw new TokenValidationException("invalid token!");
         }
         ResponseUserDto userDto = ControllerUserMapper.toResponseUserDtoFromUser(user);
@@ -75,20 +71,17 @@ public class UserController {
 
         List<User> userList = getUserGateway.getAllUsers(page, size);
         List<ResponseUserDto> userDtoList = ControllerUserMapper.toResponseUserDtoListFromListUser(userList);
-
         return ResponseEntity.ok(userDtoList);
     }
+    
     @GetMapping("/login")
     public ResponseEntity<ResponseUserTokenDto> login(@RequestBody LoginPayloadDto loginPayloadDto){
+
         User user = getUserGateway.login(loginPayloadDto.email(), loginPayloadDto.password());
-
         ResponseUserDto userDto = ControllerUserMapper.toResponseUserDtoFromUser(user);
-
         String token = TokerManager.generateToken(userDto.email());
-
         ResponseUserTokenDto responseUserTokenDto = new ResponseUserTokenDto(userDto.id(),
                 userDto.name(), userDto.email(), token);
-
         return ResponseEntity.ok(responseUserTokenDto);
 
     }
@@ -100,24 +93,53 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUserBy(@PathVariable Long userId ){
-        deleteUserGateway.deleteUserById(userId);
+    public ResponseEntity<Void> deleteUserBy(@PathVariable Long userId, @RequestParam String token){
+
+        User user = getUserGateway.getUserById(userId);
+        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
+            throw new TokenValidationException("invalid token!");
+        }
+        deleteUserGateway.deleteUserById(user.getId());
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<Void> updateUser(@PathVariable Long userId, @RequestBody ResquestUpdateUser userDto){
-        User user = ControllerUserMapper.toRequestUserUpdadeFromUser(userDto);
-        updateUserGateway.updateUser(userId, user);
+    public ResponseEntity<Void> updateUser(@PathVariable Long userId,
+                                           @RequestParam String token,
+                                           @RequestBody ResquestUpdateUser userDto){
+
+        User user = getUserGateway.getUserById(userId);
+        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
+            throw new TokenValidationException("invalid token!");
+        }
+        updateUserGateway.updateUser(user.getId(), user);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/updatepassword/{userId}")
-    public ResponseEntity<Void> updatePassord(@PathVariable Long userId, @RequestBody String password){
-        updateUserGateway.updatePassword(userId, password);
+    public ResponseEntity<Void> updatePassord(@PathVariable Long userId,
+                                              @RequestParam String token,
+                                              @RequestBody UpdatePasswordDto password){
+
+        User user = getUserGateway.getUserById(userId);
+        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
+            throw new TokenValidationException("invalid token!");
+        }
+        updateUserGateway.updatePassword(user.getId(), password.password());
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/updateisactive/{userId}")
+    public ResponseEntity<Void> updateIsActive(@PathVariable Long userId,
+                                               @RequestParam String token,
+                                               @RequestBody UpdateIsActiveDto isActive){
 
+        User user = getUserGateway.getUserById(userId);
+        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
+            throw new TokenValidationException("invalid token!");
+        }
+        updateUserGateway.updateIscative(userId, isActive.isActive());
+        return ResponseEntity.noContent().build();
+    }
 
 }
