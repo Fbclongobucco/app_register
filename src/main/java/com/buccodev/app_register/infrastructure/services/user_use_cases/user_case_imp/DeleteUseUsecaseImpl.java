@@ -4,8 +4,8 @@ import com.buccodev.app_register.application.usecase.DeleteUserUsecase;
 import com.buccodev.app_register.infrastructure.controllers.utils.TokerManager;
 import com.buccodev.app_register.infrastructure.db.UserDomainRepository;
 import com.buccodev.app_register.infrastructure.domain.UserDomain;
-import com.buccodev.app_register.infrastructure.services.user_use_cases.server_exceptions.ResourceNotFoundException;
-import com.buccodev.app_register.infrastructure.services.user_use_cases.server_exceptions.TokenValidationException;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.ResourceNotFoundException;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.TokenValidationException;
 import org.springframework.stereotype.Service;
 
 @Service

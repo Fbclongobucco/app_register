@@ -7,8 +7,6 @@ import com.buccodev.app_register.application.gateway.UpdateUserGateway;
 import com.buccodev.app_register.core.entities.User;
 import com.buccodev.app_register.infrastructure.mappers.UserMapper;
 import com.buccodev.app_register.infrastructure.services.user_use_cases.dto.*;
-import com.buccodev.app_register.infrastructure.services.user_use_cases.server_exceptions.TokenValidationException;
-import com.buccodev.app_register.infrastructure.controllers.utils.TokerManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

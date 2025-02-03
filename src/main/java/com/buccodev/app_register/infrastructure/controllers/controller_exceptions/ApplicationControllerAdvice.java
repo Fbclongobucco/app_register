@@ -2,9 +2,9 @@ package com.buccodev.app_register.infrastructure.controllers.controller_exceptio
 
 import com.buccodev.app_register.core.exception.EmailValidationException;
 import com.buccodev.app_register.core.exception.PasswordValidationException;
-import com.buccodev.app_register.infrastructure.services.user_use_cases.server_exceptions.EmailExistesException;
-import com.buccodev.app_register.infrastructure.services.user_use_cases.server_exceptions.ResourceNotFoundException;
-import com.buccodev.app_register.infrastructure.services.user_use_cases.server_exceptions.TokenValidationException;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.EmailExistesException;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.ResourceNotFoundException;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.TokenValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
