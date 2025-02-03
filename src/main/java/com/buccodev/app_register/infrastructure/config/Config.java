@@ -1,5 +1,6 @@
 package com.buccodev.app_register.infrastructure.config;
 
+import com.buccodev.app_register.infrastructure.controllers.utils.TokerManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -18,7 +19,11 @@ public class Config {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
+
         return new CorsFilter(source);
     }
+
+
 
 }

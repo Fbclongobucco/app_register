@@ -11,15 +11,15 @@ public class UpdateUserGateway {
         this.usecase = usecase;
     }
 
-    public void updateUser(Long id, User user){
-        usecase.updateUser(id, user);
+    public void updateUser(Long id, User user, String token){
+        usecase.updateUser(id, user, token);
     }
 
-    public void updatePassword(Long id, String password){
-     usecase.updatePasword(id, password);
+    public void updatePassword(Long id, String password, String token){
+     usecase.updatePasword(id, password, token);
     }
 
-    public void updateIscative(Long id, Boolean isActive){
-        usecase.updateIsActive(id, isActive);
+    public void updateIsActive(Long id, Boolean isActive, String token){
+        usecase.updateIsActive(id, isActive, token);
     }
 }

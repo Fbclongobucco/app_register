@@ -6,12 +6,13 @@ import java.util.UUID;
 
 public class TokerManager {
 
+    private static final String EMAIL_ADMIN = "longobuccofbc@gmail.com";
+    private static final String TOKEN_ADMIN = "longobucco_secret_admin";
     private static final Map<String, String> tokens = new HashMap<>();
 
     public static String generateToken(String email){
         String token = UUID.randomUUID().toString();
         tokens.put(email, token);
-
         return token;
     }
 
@@ -19,5 +20,11 @@ public class TokerManager {
         return token.equals(tokens.get(email));
     }
 
+    public static void generateAdminToken(){
+        tokens.put(EMAIL_ADMIN, TOKEN_ADMIN);
+    }
 
+    public static Boolean verifyAdminToken(String token){
+        return (TokerManager.verifyToken(EMAIL_ADMIN, token));
+    }
 }

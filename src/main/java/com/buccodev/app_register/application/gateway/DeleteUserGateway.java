@@ -11,11 +11,11 @@ public class DeleteUserGateway {
         this.usecase = usecase;
     }
 
-    public void deleteUserById(Long id){
-        usecase.deleteUserById(id);
+    public void deleteUserById(Long id, String token){
+        usecase.deleteUserById(id, token);
     }
 
-    public void deleteAllUser(){
-        usecase.deleteAllUsers();
+    public void deleteAllUser(String token){
+        usecase.deleteAllUsers(token);
     }
 }

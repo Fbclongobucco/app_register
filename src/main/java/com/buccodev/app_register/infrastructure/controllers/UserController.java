@@ -5,15 +5,16 @@ import com.buccodev.app_register.application.gateway.DeleteUserGateway;
 import com.buccodev.app_register.application.gateway.GetUserGateway;
 import com.buccodev.app_register.application.gateway.UpdateUserGateway;
 import com.buccodev.app_register.core.entities.User;
-import com.buccodev.app_register.infrastructure.controllers.dto.*;
-import com.buccodev.app_register.infrastructure.controllers.excepition.TokenValidationException;
-import com.buccodev.app_register.infrastructure.controllers.utils.ControllerUserMapper;
+import com.buccodev.app_register.infrastructure.mappers.UserMapper;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.dto.*;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.server_exceptions.TokenValidationException;
 import com.buccodev.app_register.infrastructure.controllers.utils.TokerManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -36,20 +37,22 @@ public class UserController {
     @PostMapping
     public ResponseEntity<ResponseUserDto> createUser(@RequestBody RequestUserDto requestUserDto) {
 
-        User user = ControllerUserMapper.toUserFromRequestUserDto(requestUserDto);
-        User userSalvered = createUserGateway.saveUser(user);
-        ResponseUserDto responseUserDto = ControllerUserMapper.toResponseUserDtoFromUser(userSalvered);
+        User requestUser = UserMapper.toUserFromRequestUserDto(requestUserDto);
+
+        User userCreated = createUserGateway.saveUser(requestUser);
+
+        ResponseUserDto responseUserDto = UserMapper.toResponseUserDtoFromUser(userCreated);
+
         return ResponseEntity.created(URI.create("/api/v1/"+responseUserDto.id())).build();
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseUserDto> getUserById(@PathVariable Long userId, @RequestParam String token ){
 
-        User user = getUserGateway.getUserById(userId);
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
-            throw new TokenValidationException("invalid token!");
-        }
-        ResponseUserDto userDto = ControllerUserMapper.toResponseUserDtoFromUser(user);
+        User user = getUserGateway.getUserById(userId, token);
+
+        ResponseUserDto userDto = UserMapper.toResponseUserDtoFromUser(user);
+
         return ResponseEntity.ok(userDto);
 
     }
@@ -57,62 +60,62 @@ public class UserController {
     @GetMapping("/email/{email}")
     public ResponseEntity<ResponseUserDto> getUserByEmail(@PathVariable String  email, @RequestParam String token ){
 
-        User user = getUserGateway.getUserByEmail(email);
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
-            throw new TokenValidationException("invalid token!");
-        }
-        ResponseUserDto userDto = ControllerUserMapper.toResponseUserDtoFromUser(user);
+        User user = getUserGateway.getUserByEmail(email, token);
+
+        ResponseUserDto userDto = UserMapper.toResponseUserDtoFromUser(user);
+
         return ResponseEntity.ok(userDto);
 
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseUserDto>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size){
+    public ResponseEntity<List<ResponseUserDto>> getAllUsers(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "20") int size,
+                                                             @RequestParam String token){
 
-        List<User> userList = getUserGateway.getAllUsers(page, size);
-        List<ResponseUserDto> userDtoList = ControllerUserMapper.toResponseUserDtoListFromListUser(userList);
+        List<User> userList = getUserGateway.getAllUsers(page, size, token);
+
+        List<ResponseUserDto> userDtoList = UserMapper.toResponseUserDtoListFromListUser(userList);
+
         return ResponseEntity.ok(userDtoList);
     }
     
     @GetMapping("/login")
     public ResponseEntity<ResponseUserTokenDto> login(@RequestBody LoginPayloadDto loginPayloadDto){
 
-        User user = getUserGateway.login(loginPayloadDto.email(), loginPayloadDto.password());
-        ResponseUserDto userDto = ControllerUserMapper.toResponseUserDtoFromUser(user);
-        String token = TokerManager.generateToken(userDto.email());
-        ResponseUserTokenDto responseUserTokenDto = new ResponseUserTokenDto(userDto.id(),
-                userDto.name(), userDto.email(), token);
+        Map <User, String> userAndToken = getUserGateway.login(loginPayloadDto.email(), loginPayloadDto.password());
+
+        User user = userAndToken.keySet().iterator().next();
+
+        String token = userAndToken.get(user);
+
+        ResponseUserTokenDto responseUserTokenDto = new ResponseUserTokenDto(user.getId(),
+                user.getName(), user.getEmail(), token);
+
         return ResponseEntity.ok(responseUserTokenDto);
 
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteAll(){
-        deleteUserGateway.deleteAllUser();
+    public ResponseEntity<Void> deleteAll(@RequestParam String token){
+        deleteUserGateway.deleteAllUser(token);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUserBy(@PathVariable Long userId, @RequestParam String token){
-
-        User user = getUserGateway.getUserById(userId);
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
-            throw new TokenValidationException("invalid token!");
-        }
-        deleteUserGateway.deleteUserById(user.getId());
+        deleteUserGateway.deleteUserById(userId, token);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{userId}")
     public ResponseEntity<Void> updateUser(@PathVariable Long userId,
                                            @RequestParam String token,
-                                           @RequestBody ResquestUpdateUser userDto){
+                                           @RequestBody ResquestUpdateUser resquestUpdateUser){
 
-        User user = getUserGateway.getUserById(userId);
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
-            throw new TokenValidationException("invalid token!");
-        }
-        updateUserGateway.updateUser(user.getId(), user);
+        User user = UserMapper.toUserFromUserRequestUpdateDto(resquestUpdateUser);
+
+        updateUserGateway.updateUser(userId, user, token);
         return ResponseEntity.ok().build();
     }
 
@@ -121,11 +124,7 @@ public class UserController {
                                               @RequestParam String token,
                                               @RequestBody UpdatePasswordDto password){
 
-        User user = getUserGateway.getUserById(userId);
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
-            throw new TokenValidationException("invalid token!");
-        }
-        updateUserGateway.updatePassword(user.getId(), password.password());
+        updateUserGateway.updatePassword(userId, password.password(), token);
         return ResponseEntity.noContent().build();
     }
 
@@ -134,11 +133,8 @@ public class UserController {
                                                @RequestParam String token,
                                                @RequestBody UpdateIsActiveDto isActive){
 
-        User user = getUserGateway.getUserById(userId);
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(user.getEmail(), token))) {
-            throw new TokenValidationException("invalid token!");
-        }
-        updateUserGateway.updateIscative(userId, isActive.isActive());
+
+        updateUserGateway.updateIsActive(userId, isActive.isActive(), token);
         return ResponseEntity.noContent().build();
     }
 

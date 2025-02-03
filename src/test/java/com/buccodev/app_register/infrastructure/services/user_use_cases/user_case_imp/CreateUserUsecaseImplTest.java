@@ -1,4 +1,4 @@
-package com.buccodev.app_register.infrastructure.services.usecases.user_imp;
+package com.buccodev.app_register.infrastructure.services.user_use_cases.user_case_imp;
 
 import com.buccodev.app_register.core.entities.User;
 import com.buccodev.app_register.infrastructure.db.UserDomainRepository;

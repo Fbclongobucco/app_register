@@ -4,6 +4,7 @@ import com.buccodev.app_register.application.usecase.GetUserUsecase;
 import com.buccodev.app_register.core.entities.User;
 
 import java.util.List;
+import java.util.Map;
 
 public class GetUserGateway {
 
@@ -13,19 +14,19 @@ public class GetUserGateway {
         this.usecase = usecase;
     }
 
-    public User getUserById(Long id){
-        return usecase.getUserById(id);
+    public User getUserById(Long id, String token){
+        return usecase.getUserById(id, token);
     }
 
-    public User getUserByEmail(String email){
-        return usecase.getUserByEmail(email);
+    public User getUserByEmail(String email, String token){
+        return usecase.getUserByEmail(email, token);
     }
 
-    public List<User> getAllUsers(Integer page,  Integer size){
-        return usecase.getAllUser(page, size);
+    public List<User> getAllUsers(Integer page,  Integer size, String token){
+        return usecase.getAllUser(page, size, token);
     }
 
-    public User login(String email, String password){
+    public Map<User, String>  login(String email, String password){
         return usecase.login(email, password);
     }
 
