@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 public class UpdateUserUsecaseImpl implements UpdateUserUsecase {
 
     private final UserDomainRepository repository;
+    private final TokerManager tokerManager;
 
-    public UpdateUserUsecaseImpl(UserDomainRepository repository) {
+    public UpdateUserUsecaseImpl(UserDomainRepository repository, TokerManager tokerManager) {
         this.repository = repository;
+        this.tokerManager = tokerManager;
     }
 
     @Override
@@ -24,7 +26,7 @@ public class UpdateUserUsecaseImpl implements UpdateUserUsecase {
         UserDomain userRecovered = repository.findById(id).
                 orElseThrow(()-> new ResourceNotFoundException("user to be updated not found!"));
 
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(userRecovered.getEmail(), token) && userRecovered.getId().equals(id))) {
+        if (Boolean.FALSE.equals(tokerManager.verifyToken(userRecovered.getEmail(), token) && userRecovered.getId().equals(id))) {
             throw new TokenValidationException("invalid token!");
         }
         userRecovered.setName(user.getName());
@@ -42,9 +44,10 @@ public class UpdateUserUsecaseImpl implements UpdateUserUsecase {
         UserDomain userRecovered = repository.findById(id).
                 orElseThrow(()-> new ResourceNotFoundException("user to be updated not found!"));
 
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(userRecovered.getEmail(), token) && userRecovered.getId().equals(id))) {
+        if (Boolean.FALSE.equals(tokerManager.verifyToken(userRecovered.getEmail(), token) && userRecovered.getId().equals(id))) {
             throw new TokenValidationException("invalid token!");
         }
+
 
         userRecovered.setActive(isActive);
 
@@ -57,7 +60,7 @@ public class UpdateUserUsecaseImpl implements UpdateUserUsecase {
         UserDomain userRecovered = repository.findById(id).
                 orElseThrow(()-> new ResourceNotFoundException("user to be updated not found!"));
 
-        if (Boolean.FALSE.equals(TokerManager.verifyToken(userRecovered.getEmail(), token)
+        if (Boolean.FALSE.equals(tokerManager.verifyToken(userRecovered.getEmail(), token)
                 && userRecovered.getId().equals(id))) {
             throw new TokenValidationException("invalid token!");
         }
@@ -66,7 +69,4 @@ public class UpdateUserUsecaseImpl implements UpdateUserUsecase {
 
         repository.save(userRecovered);
     }
-
-
-
 }

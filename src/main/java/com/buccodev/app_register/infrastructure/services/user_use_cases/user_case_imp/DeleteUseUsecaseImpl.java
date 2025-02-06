@@ -12,17 +12,19 @@ import org.springframework.stereotype.Service;
 public class DeleteUseUsecaseImpl implements DeleteUserUsecase {
 
     private final UserDomainRepository repository;
+    private final TokerManager tokerManager;
 
-    public DeleteUseUsecaseImpl(UserDomainRepository repository) {
+    public DeleteUseUsecaseImpl(UserDomainRepository repository, TokerManager tokerManager) {
         this.repository = repository;
+        this.tokerManager = tokerManager;
     }
 
     @Override
     public void deleteUserById(Long id, String token) {
         UserDomain userDomain = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("user to be deleted not found!"));
 
-        boolean isUserTokenValid = TokerManager.verifyToken(userDomain.getEmail(), token);
-        boolean isAdminTokenValid = TokerManager.verifyAdminToken(token);
+        boolean isUserTokenValid = tokerManager.verifyToken(userDomain.getEmail(), token);
+        boolean isAdminTokenValid = tokerManager.verifyAdminToken(token);
 
         if (!isUserTokenValid && !isAdminTokenValid) {
             throw new TokenValidationException("Invalid token!");
@@ -33,7 +35,7 @@ public class DeleteUseUsecaseImpl implements DeleteUserUsecase {
     @Override
     public void deleteAllUsers(String token) {
 
-        if(Boolean.FALSE.equals(TokerManager.verifyAdminToken(token))){
+        if(Boolean.FALSE.equals(tokerManager.verifyAdminToken(token))){
             throw new TokenValidationException("invalid token!");
         }
 

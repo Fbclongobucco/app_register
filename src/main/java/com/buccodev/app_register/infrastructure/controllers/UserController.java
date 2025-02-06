@@ -71,6 +71,8 @@ public class UserController {
                                                              @RequestParam(defaultValue = "20") int size,
                                                              @RequestParam String token){
 
+        System.out.println("Token received in getAllUser: " + token);
+
         List<User> userList = getUserGateway.getAllUsers(page, size, token);
 
         List<ResponseUserDto> userDtoList = UserMapper.toResponseUserDtoListFromListUser(userList);

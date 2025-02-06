@@ -8,6 +8,7 @@ public class AppRegisterApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AppRegisterApplication.class, args);
+
 	}
 
 }

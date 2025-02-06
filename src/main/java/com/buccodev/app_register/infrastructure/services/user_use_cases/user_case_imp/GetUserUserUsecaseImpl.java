@@ -21,9 +21,11 @@ import java.util.Map;
 public class GetUserUserUsecaseImpl implements GetUserUsecase {
 
     private final UserDomainRepository repository;
+    private final TokerManager tokerManager;
 
-    public GetUserUserUsecaseImpl(UserDomainRepository repository) {
+    public GetUserUserUsecaseImpl(UserDomainRepository repository, TokerManager tokerManager) {
         this.repository = repository;
+        this.tokerManager = tokerManager;
     }
 
     @Override
@@ -33,8 +35,8 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
                 orElseThrow(()-> new ResourceNotFoundException("user not found!"));
 
 
-        boolean isUserTokenValid = TokerManager.verifyToken(userDomain.getEmail(), token);
-        boolean isAdminTokenValid = TokerManager.verifyAdminToken(token);
+        boolean isUserTokenValid = tokerManager.verifyToken(userDomain.getEmail(), token);
+        boolean isAdminTokenValid = tokerManager.verifyAdminToken(token);
 
         if (!isUserTokenValid && !isAdminTokenValid) {
             throw new TokenValidationException("Invalid token!");
@@ -51,8 +53,8 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
                 orElseThrow(()->new ResourceNotFoundException("email not found!"));
 
 
-        boolean isUserTokenValid = TokerManager.verifyToken(userDomain.getEmail(), token);
-        boolean isAdminTokenValid = TokerManager.verifyAdminToken(token);
+        boolean isUserTokenValid = tokerManager.verifyToken(userDomain.getEmail(), token);
+        boolean isAdminTokenValid = tokerManager.verifyAdminToken(token);
 
         if (!isUserTokenValid && !isAdminTokenValid) {
             throw new TokenValidationException("Invalid token!");
@@ -73,7 +75,7 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
             throw new PasswordValidationException("the password is incorrect");
         }
 
-        String userToken = TokerManager.generateToken(user.getEmail());
+        String userToken = tokerManager.generateToken(user.getEmail());
 
         Map<User, String> userTokenMap = new HashMap<>();
 
@@ -91,7 +93,9 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
             throw new IllegalArgumentException("Page size must not be less than or equal to zero!");
         }
 
-        if(!TokerManager.verifyAdminToken(token)){
+        System.out.println("Token received in getAllUser: " + token);
+
+        if(!tokerManager.verifyAdminToken(token)){
             throw new PasswordValidationException("the password is incorrect");
         }
 

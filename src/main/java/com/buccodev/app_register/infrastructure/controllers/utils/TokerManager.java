@@ -1,30 +1,38 @@
 package com.buccodev.app_register.infrastructure.controllers.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Component
 public class TokerManager {
 
-    private static final String EMAIL_ADMIN = "longobuccofbc@gmail.com";
-    private static final String TOKEN_ADMIN = "longobucco_secret_admin";
-    private static final Map<String, String> tokens = new HashMap<>();
+    @Value("${admin.email}")
+    private String emailAdmin;
 
-    public static String generateToken(String email){
+    @Value("${admin.token}")
+    private String tokenAdmin;
+
+    private final Map<String, String> tokens = new HashMap<>();
+
+    public String generateToken(String email) {
         String token = UUID.randomUUID().toString();
         tokens.put(email, token);
         return token;
     }
 
-    public static Boolean verifyToken(String email, String token){
+    public Boolean verifyToken(String email, String token) {
         return token.equals(tokens.get(email));
     }
 
-    public static void generateAdminToken(){
-        tokens.put(EMAIL_ADMIN, TOKEN_ADMIN);
+    public void generateAdminToken() {
+        tokens.put(emailAdmin, tokenAdmin);
     }
 
-    public static Boolean verifyAdminToken(String token){
-        return (TokerManager.verifyToken(EMAIL_ADMIN, token));
+    public Boolean verifyAdminToken(String token) {
+        return verifyToken(emailAdmin, token);
     }
 }

@@ -6,8 +6,20 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RunConfiguration implements CommandLineRunner {
+
+    private final TokerManager tokerManager;
+
+    public RunConfiguration(TokerManager tokerManager) {
+        this.tokerManager = tokerManager;
+    }
+
     @Override
     public void run(String... args) throws Exception {
-        TokerManager.generateAdminToken();
+        tokerManager.generateAdminToken();
+
+        System.out.println("estou de pé!");
+
+        System.out.println("Admin token generated: " + tokerManager.verifyAdminToken("91710956"));
+
     }
 }
