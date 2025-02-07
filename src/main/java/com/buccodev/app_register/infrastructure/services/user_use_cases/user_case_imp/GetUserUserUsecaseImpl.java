@@ -87,7 +87,7 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
         }
 
         if(tokenManager.verifyAdminToken(token)){
-            throw new PasswordValidationException("the password is incorrect");
+            throw new TokenValidationException("invalid token!");
         }
 
         PageRequest pageRequest = PageRequest.of(page, size);

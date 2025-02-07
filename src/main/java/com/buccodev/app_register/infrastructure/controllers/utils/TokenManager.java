@@ -34,7 +34,6 @@ public class TokenManager {
     }
 
     public Boolean verifyAdminToken(String token) {
-
         return !token.equals(tokenAdmin);
     }
 }
