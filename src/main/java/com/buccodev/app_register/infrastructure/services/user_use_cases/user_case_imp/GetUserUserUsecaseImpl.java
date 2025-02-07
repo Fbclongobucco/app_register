@@ -3,7 +3,7 @@ package com.buccodev.app_register.infrastructure.services.user_use_cases.user_ca
 import com.buccodev.app_register.application.usecase.GetUserUsecase;
 import com.buccodev.app_register.core.entities.User;
 import com.buccodev.app_register.core.exception.PasswordValidationException;
-import com.buccodev.app_register.infrastructure.controllers.utils.TokerManager;
+import com.buccodev.app_register.infrastructure.controllers.utils.TokenManager;
 import com.buccodev.app_register.infrastructure.db.UserDomainRepository;
 import com.buccodev.app_register.infrastructure.domain.UserDomain;
 import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.ResourceNotFoundException;
@@ -21,61 +21,54 @@ import java.util.Map;
 public class GetUserUserUsecaseImpl implements GetUserUsecase {
 
     private final UserDomainRepository repository;
-    private final TokerManager tokerManager;
+    private final TokenManager tokenManager;
 
-    public GetUserUserUsecaseImpl(UserDomainRepository repository, TokerManager tokerManager) {
+    public GetUserUserUsecaseImpl(UserDomainRepository repository, TokenManager tokenManager) {
         this.repository = repository;
-        this.tokerManager = tokerManager;
+        this.tokenManager = tokenManager;
     }
 
     @Override
     public User getUserById(Long id, String token) {
 
-        UserDomain userDomain = repository.findById(id).
+        UserDomain userRecovery = repository.findById(id).
                 orElseThrow(()-> new ResourceNotFoundException("user not found!"));
 
 
-        boolean isUserTokenValid = tokerManager.verifyToken(userDomain.getEmail(), token);
-        boolean isAdminTokenValid = tokerManager.verifyAdminToken(token);
+        if (tokenManager.verifyAdminToken(token) && !tokenManager.verifyToken(userRecovery.getEmail(), token)) {
+                throw new TokenValidationException("Invalid token!");
+            }
 
-        if (!isUserTokenValid && !isAdminTokenValid) {
-            throw new TokenValidationException("Invalid token!");
-        }
-
-        return UserMapper.toUserFromUserDomain(userDomain);
+        return UserMapper.toUserFromUserDomain(userRecovery);
 
     }
 
     @Override
     public User getUserByEmail(String email, String token) {
 
-        UserDomain userDomain = repository.findByEmail(email).
+        UserDomain userRecovery = repository.findByEmail(email).
                 orElseThrow(()->new ResourceNotFoundException("email not found!"));
 
-
-        boolean isUserTokenValid = tokerManager.verifyToken(userDomain.getEmail(), token);
-        boolean isAdminTokenValid = tokerManager.verifyAdminToken(token);
-
-        if (!isUserTokenValid && !isAdminTokenValid) {
+        if (tokenManager.verifyAdminToken(token) && !tokenManager.verifyToken(userRecovery.getEmail(), token)) {
             throw new TokenValidationException("Invalid token!");
         }
 
-        return UserMapper.toUserFromUserDomain(userDomain);
+        return UserMapper.toUserFromUserDomain(userRecovery);
     }
 
     @Override
     public Map<User, String> login(String email, String password) {
 
-        UserDomain userDomain = repository.findByEmail(email).
+        UserDomain userRecovery = repository.findByEmail(email).
                 orElseThrow(()-> new ResourceNotFoundException("email not found!")) ;
 
-        User user = UserMapper.toUserFromUserDomain(userDomain);
+        User user = UserMapper.toUserFromUserDomain(userRecovery);
 
         if(!user.ifThePasswordMatches(password)){
             throw new PasswordValidationException("the password is incorrect");
         }
 
-        String userToken = tokerManager.generateToken(user.getEmail());
+        String userToken = tokenManager.generateToken(user.getEmail());
 
         Map<User, String> userTokenMap = new HashMap<>();
 
@@ -93,9 +86,7 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
             throw new IllegalArgumentException("Page size must not be less than or equal to zero!");
         }
 
-        System.out.println("Token received in getAllUser: " + token);
-
-        if(!tokerManager.verifyAdminToken(token)){
+        if(tokenManager.verifyAdminToken(token)){
             throw new PasswordValidationException("the password is incorrect");
         }
 

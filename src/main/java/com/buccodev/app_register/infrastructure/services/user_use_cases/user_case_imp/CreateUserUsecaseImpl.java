@@ -24,9 +24,9 @@ public class CreateUserUsecaseImpl implements CreateUserUsecase {
             throw new EmailExistesException("email already registered");
        }
 
-       UserDomain userDomain = UserMapper.toUserDomainfromUser(user);
+       UserDomain userRecovery = UserMapper.toUserDomainfromUser(user);
 
-       UserDomain userDomainSalved = repository.save(userDomain);
+       UserDomain userDomainSalved = repository.save(userRecovery);
 
 
         return UserMapper.toUserFromUserDomain(userDomainSalved);

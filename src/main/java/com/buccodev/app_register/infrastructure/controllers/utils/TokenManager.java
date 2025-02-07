@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
-public class TokerManager {
+public class TokenManager {
 
     @Value("${admin.email}")
     private String emailAdmin;
@@ -25,6 +25,7 @@ public class TokerManager {
     }
 
     public Boolean verifyToken(String email, String token) {
+
         return token.equals(tokens.get(email));
     }
 
@@ -33,6 +34,7 @@ public class TokerManager {
     }
 
     public Boolean verifyAdminToken(String token) {
-        return verifyToken(emailAdmin, token);
+
+        return !token.equals(tokenAdmin);
     }
 }
