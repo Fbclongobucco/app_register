@@ -1,37 +1,38 @@
+version: "3.9" # Versão do Docker Compose (opcional, mas recomendado)
+
 services:
   postgres_db:
     image: postgres:latest
     container_name: postgres_db_app
-    restart: always
     environment:
-      POSTGRES_DB: app_register
-      POSTGRES_USER: longobucco
-      POSTGRES_PASSWORD: longobucco300412
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
     image: fblongobucco/app_register:1.0
-    container_name: app_register_db_app
+    container_name: app_register
     restart: always
     depends_on:
       - postgres_db
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-      DATABASE_URL: jdbc:postgresql://postgres_db_app:5432/app_register
-      ADMIN_EMAIL: longobuccofbc@gmail.com
-      ADMIN_TOKEN: 91710956
+      SPRING_PROFILES_ACTIVE:  ${SPRING_PROFILES_ACTIVE}
+      DATABASE_URL: jdbc:postgresql://postgres_db:${PORT}/${POSTGRES_DB}
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
     ports:
       - "8080:8080"
-    networks:
-      - app_network
 
 volumes:
   postgres_data:
     driver: local
-
-networks:
-  app_network:
-    driver: bridge

@@ -19,7 +19,5 @@ public class RunConfiguration implements CommandLineRunner {
 
         System.out.println("estou de pé!");
 
-        System.out.println("Admin token generated: " + tokerManager.verifyAdminToken("91710956"));
-
     }
 }
