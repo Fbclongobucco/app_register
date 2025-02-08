@@ -14,8 +14,8 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - minha_rede
+      - my-network
 
 networks:
-  minha_rede:
+  my-network:
     external: true

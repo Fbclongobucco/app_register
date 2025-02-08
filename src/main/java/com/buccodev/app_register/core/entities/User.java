@@ -92,10 +92,6 @@ public class User {
         }
     }
 
-    public Boolean ifThePasswordMatches(String password){
-        return this.password.equals(password);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

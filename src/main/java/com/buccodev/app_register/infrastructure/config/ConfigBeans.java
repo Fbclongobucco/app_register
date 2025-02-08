@@ -10,6 +10,8 @@ import com.buccodev.app_register.application.usecase.GetUserUsecase;
 import com.buccodev.app_register.application.usecase.UpdateUserUsecase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ConfigBeans {
@@ -29,6 +31,10 @@ public class ConfigBeans {
     @Bean
     UpdateUserGateway updateUserGateway(UpdateUserUsecase usecase){
         return  new UpdateUserGateway(usecase);
+    }
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
 }

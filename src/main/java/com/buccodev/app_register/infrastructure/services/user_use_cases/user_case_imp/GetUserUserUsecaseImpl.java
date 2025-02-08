@@ -11,6 +11,7 @@ import com.buccodev.app_register.infrastructure.mappers.UserMapper;
 import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.TokenValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,10 +23,12 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
 
     private final UserDomainRepository repository;
     private final TokenManager tokenManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public GetUserUserUsecaseImpl(UserDomainRepository repository, TokenManager tokenManager) {
+    public GetUserUserUsecaseImpl(UserDomainRepository repository, TokenManager tokenManager, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.tokenManager = tokenManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -64,7 +67,8 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
 
         User user = UserMapper.toUserFromUserDomain(userRecovery);
 
-        if(!user.ifThePasswordMatches(password)){
+
+        if(!passwordEncoder.matches(password, user.getPassword())){
             throw new PasswordValidationException("the password is incorrect");
         }
 
