@@ -17,8 +17,5 @@ public class RunConfiguration implements CommandLineRunner {
     public void run(String... args) throws Exception {
         tokenManager.generateAdminToken();
 
-
-        System.out.println("estou de pé!");
-
     }
 }
