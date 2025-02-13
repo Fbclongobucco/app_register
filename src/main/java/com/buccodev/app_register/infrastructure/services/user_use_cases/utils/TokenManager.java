@@ -1,4 +1,4 @@
-package com.buccodev.app_register.infrastructure.controllers.utils;
+package com.buccodev.app_register.infrastructure.services.user_use_cases.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -34,6 +34,6 @@ public class TokenManager {
     }
 
     public Boolean verifyAdminToken(String token) {
-        return !token.equals(tokenAdmin);
+        return token.equals(tokenAdmin);
     }
 }

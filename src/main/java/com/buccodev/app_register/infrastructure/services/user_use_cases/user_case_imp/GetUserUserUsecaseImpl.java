@@ -3,7 +3,7 @@ package com.buccodev.app_register.infrastructure.services.user_use_cases.user_ca
 import com.buccodev.app_register.application.usecase.GetUserUsecase;
 import com.buccodev.app_register.core.entities.User;
 import com.buccodev.app_register.core.exception.PasswordValidationException;
-import com.buccodev.app_register.infrastructure.controllers.utils.TokenManager;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.utils.TokenManager;
 import com.buccodev.app_register.infrastructure.db.UserDomainRepository;
 import com.buccodev.app_register.infrastructure.domain.UserDomain;
 import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.ResourceNotFoundException;
@@ -38,7 +38,7 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
                 orElseThrow(()-> new ResourceNotFoundException("user not found!"));
 
 
-        if (tokenManager.verifyAdminToken(token) && !tokenManager.verifyToken(userRecovery.getEmail(), token)) {
+        if (!tokenManager.verifyAdminToken(token) && !tokenManager.verifyToken(userRecovery.getEmail(), token)) {
                 throw new TokenValidationException("Invalid token!");
             }
 
@@ -52,7 +52,7 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
         UserDomain userRecovery = repository.findByEmail(email).
                 orElseThrow(()->new ResourceNotFoundException("email not found!"));
 
-        if (tokenManager.verifyAdminToken(token) && !tokenManager.verifyToken(userRecovery.getEmail(), token)) {
+        if (!tokenManager.verifyAdminToken(token) && !tokenManager.verifyToken(userRecovery.getEmail(), token)) {
             throw new TokenValidationException("Invalid token!");
         }
 
@@ -90,7 +90,7 @@ public class GetUserUserUsecaseImpl implements GetUserUsecase {
             throw new IllegalArgumentException("Page size must not be less than or equal to zero!");
         }
 
-        if(tokenManager.verifyAdminToken(token)){
+        if(!tokenManager.verifyAdminToken(token)){
             throw new TokenValidationException("invalid token!");
         }
 

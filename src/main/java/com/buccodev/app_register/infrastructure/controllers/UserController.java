@@ -80,7 +80,7 @@ public class UserController {
         return ResponseEntity.ok(userDtoList);
     }
     
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<ResponseUserTokenDto> login(@RequestBody LoginPayloadDto loginPayloadDto){
 
         Map <User, String> userAndToken = getUserGateway.login(loginPayloadDto.email(), loginPayloadDto.password());

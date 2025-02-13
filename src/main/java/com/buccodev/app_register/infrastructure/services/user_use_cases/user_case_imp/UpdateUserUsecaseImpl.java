@@ -2,7 +2,7 @@ package com.buccodev.app_register.infrastructure.services.user_use_cases.user_ca
 
 import com.buccodev.app_register.application.usecase.UpdateUserUsecase;
 import com.buccodev.app_register.core.entities.User;
-import com.buccodev.app_register.infrastructure.controllers.utils.TokenManager;
+import com.buccodev.app_register.infrastructure.services.user_use_cases.utils.TokenManager;
 import com.buccodev.app_register.infrastructure.db.UserDomainRepository;
 import com.buccodev.app_register.infrastructure.domain.UserDomain;
 import com.buccodev.app_register.infrastructure.services.user_use_cases.service_exceptions.ResourceNotFoundException;
